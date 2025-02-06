@@ -1,0 +1,6 @@
+can
+glass
+paper
+plastic
+plastic_bag
+styrofoam
