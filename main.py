@@ -3,23 +3,28 @@ import os
 import cv2
 import numpy as np
 import pandas as pd
+import configparser
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from tensorflow.keras import layers, models
 
+config = configparser.ConfigParser()
+config.read("config.cfg")
+
+csv_path = config["DATASET_PATH"]["csv_path"]
+
 # Load dataset from Kaggle directory
-DATASET_PATH = "C:/Users/lmars/.cache/kagglehub/datasets/minhoheo/recyable-materials/versions/2/recyclable_materials"
 IMG_SIZE = 48
 # Filter to include only directories in CLASSES
-CLASSES = [d for d in sorted(os.listdir(DATASET_PATH)) 
-           if os.path.isdir(os.path.join(DATASET_PATH, d))]
+CLASSES = [d for d in sorted(os.listdir(csv_path)) 
+           if os.path.isdir(os.path.join(csv_path, d))]
 
 # Load images and labels
 images = []
 labels = []
 
 for class_idx, class_name in enumerate(CLASSES):
-    class_path = os.path.join(DATASET_PATH, class_name)
+    class_path = os.path.join(csv_path, class_name)
     # Check if class_path is a directory (redundant safety check)
     if os.path.isdir(class_path):
         for img_file in os.listdir(class_path):
@@ -27,7 +32,7 @@ for class_idx, class_name in enumerate(CLASSES):
             img = cv2.imread(img_path)
             if img is not None:
                 img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
-                img = img / 255.0  # Normalize
+                img = img / 255.0
                 images.append(img)
                 labels.append(class_idx)
             else:
